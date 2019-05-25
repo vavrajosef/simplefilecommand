@@ -17,7 +17,7 @@ shared_ptr<FileClass> Copy::getDestinationFile() {
     return _destinationFile;
 }
 
-void Copy::execute() {
+string Copy::execute() {
     string wholeDestinationPath = _destinationDirectory->getPath() + "/" + _destinationFile->getFileName();
-    _triggeredFile->copy(_triggeredDirectory->getPath(), wholeDestinationPath);
+    return _triggeredFile->copy(_triggeredDirectory->getPath(), wholeDestinationPath);
 }

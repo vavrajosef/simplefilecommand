@@ -33,3 +33,11 @@ string RegularFile::copy(string source, string destination) {
 	close(destDesc);
 	return "";
 }
+
+string RegularFile::createFile(string path) {
+	string filePath = path + "/" + _fileName;
+	if(creat(filePath.c_str(), 0777) != 0) {
+		return "Could not create file";
+	}
+	return "";
+}

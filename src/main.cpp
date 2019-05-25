@@ -16,10 +16,13 @@ int main() {
 		Panel * activeP = leftPanel;
 		Panel * inactiveP = rightPanel;
 		initscr();
+		refresh();
 		WINDOW * leftWindow = newwin(leftPanel->getSizeY(), leftPanel->getSizeX(), leftPanel->getPositionY(), leftPanel->getPositionX())    ;
 
 		WINDOW * rightWindow = newwin(rightPanel->getSizeY(), rightPanel->getSizeX(), rightPanel->getPositionY(), rightPanel->getPositionX());
 
+		activeP->changeDirectory(".");
+		inactiveP->changeDirectory(".");
 		noecho();
 		int inputChar;
 		string errorMessage;
@@ -48,12 +51,12 @@ int main() {
 string handleInput(int * inputChar, Panel ** active, Panel ** inactive) {
 	string errorMessage = "";
 	*inputChar = getch();
-	//shared_ptr<Action> dummy = nullptr;
+	shared_ptr<Action> dummy = nullptr;
 	switch(*inputChar) {
 		case '5': {
-			//Copy copyAction((*active)->getActiveFile(), (*active)->getDirectory(),
-//(*active)->getActiveFile(), (*inactive)->getDirectory());
-			//dummy = make_shared<Copy>(copyAction);
+			Copy copyAction((*active)->getActiveFile(), (*active)->getDirectory(),
+			(*active)->getActiveFile(), (*inactive)->getDirectory());
+			dummy = make_shared<Copy>(copyAction);
 			break;
 		}
 		case 'A':
@@ -98,9 +101,11 @@ string handleInput(int * inputChar, Panel ** active, Panel ** inactive) {
 		default:
 			break;
 	}
-	//if(dummy != nullptr) {
-	//	dummy->execute();
-//	}
+	if(dummy != nullptr) {
+		errorMessage = dummy->execute();
+		(*active)->reload();
+		(*inactive)->reload();
+	}
 	return errorMessage;
 }
 

@@ -7,6 +7,7 @@ Regex::Regex(shared_ptr<Regexable> action, shared_ptr<Directory> destination) : 
     _destinationDirectory = destination;
 }
 
-void Regex::execute() {
+string Regex::execute() {
     // todo find affected files first
+		return "";
 }

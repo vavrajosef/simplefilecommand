@@ -16,7 +16,7 @@ public:
 
     std::shared_ptr<Directory> getTriggeredDirectory();
 
-    virtual void execute() = 0;
+    virtual std::string execute() = 0;
 
    // virtual ~Action() = 0;
 };
@@ -33,7 +33,7 @@ public:
 
     std::shared_ptr<Directory> getDestinationDirectory();
 
-    void execute() override;
+    std::string execute() override;
 
    // ~Copy() override = 0;
 };
@@ -44,14 +44,14 @@ private:
 public:
     Create(std::string newFileName, std::shared_ptr<Directory> triggeredDirectory);
 
-    void execute() override;
+    std::string execute() override;
 };
 
 class Delete : virtual public Action, virtual public Regexable {
 public:
     Delete(std::shared_ptr<FileClass> triggeredFile, std::shared_ptr<Directory> triggeredDirectory);
 
-    void execute() override;
+    std::string execute() override;
 
     //~Delete() override = 0;
 };
@@ -61,7 +61,7 @@ public:
     Move(std::shared_ptr<FileClass> triggeredFile, std::shared_ptr<Directory> triggeredDirectory,
          std::shared_ptr<FileClass> destinationFile, std::shared_ptr<Directory> destinationDirectory);
 
-    void execute() override;
+    std::string execute() override;
 
     //~Move() override = 0 ;
 };
@@ -74,6 +74,6 @@ private:
     std::vector<std::string> affectedFiles;
 public:
     Regex(std::shared_ptr<Regexable> action, std::shared_ptr<Directory> destination);
-    void execute() override;
+    std::string execute() override;
    // ~Regex() override = 0;
 };

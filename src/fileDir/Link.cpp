@@ -20,7 +20,15 @@ string Link::deleteFile(string path) {
 	return "";
 }
 
-string Link::copy(string path, string destination) {
+string Link::copy(string source, string destination) {
+	return createFile(destination);
+}
 
-	return "";
+string Link::createFile(string path) {
+	if(symlink(_destination.c_str(), path.c_str()) != 0) {
+			return path + " _ " + _destination;
+//		return "Could not create symlink";
+	}
+	return "ok - " +
+			path + " _ " + _destination;
 }

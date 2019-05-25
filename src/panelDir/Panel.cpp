@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -13,11 +14,12 @@ Panel::Panel(int positionX, int positionY, int sizeX, int sizeY) {
     _sizeY = sizeY;
 		Directory newDir(".", false, ".");
 		currentDirectory = make_shared<Directory>(newDir);
-		changeDirectory(".");
 }
 
 string Panel::changeDirectory(string path) {
 	DIR *pDIR;
+	Directory newDir(path, false, path);
+	currentDirectory = make_shared<Directory>(newDir);
 	struct dirent *entry;
 	filesInDir.clear();
 	if(activeFile != nullptr) {
@@ -32,19 +34,29 @@ string Panel::changeDirectory(string path) {
 		while(entry != nullptr){
 			struct stat s;
 			string wholePath = path + "/" + entry->d_name;
-			if(stat(wholePath.c_str(), &s) == 0) {
+			if(lstat(wholePath.c_str(), &s) == 0) {
 				shared_ptr<FileClass> dummy;
-				if(s.st_mode & S_IFDIR) {
-					char absolutePath[PATH_MAX + 1];
-					realpath(wholePath.c_str(), absolutePath);
-					Directory dir(entry->d_name, isActive, string(absolutePath));
-					dummy = make_shared<Directory>(dir);
-				} else if (s.st_mode & S_IFLNK) {
-					Link link(entry->d_name, isActive, "");
-					dummy = make_shared<Link>(link);
-				} else {
-					RegularFile regFile(entry->d_name, isActive);
-					dummy = make_shared<RegularFile>(regFile);
+				switch(s.st_mode & S_IFMT) {
+					case S_IFDIR: {
+						char absolutePath[PATH_MAX + 1];
+						realpath(wholePath.c_str(), absolutePath);
+						Directory dir(entry->d_name, isActive, string(absolutePath));
+						dummy = make_shared<Directory>(dir);
+						break;
+					}
+					case S_IFLNK: {
+						char linkAbsPath[PATH_MAX + 1];
+						realpath(wholePath.c_str(), linkAbsPath);
+						errorMessage = "link: " + string(linkAbsPath);
+						Link link(entry->d_name, isActive, string(linkAbsPath));
+						dummy = make_shared<Link>(link);
+						break;
+					}
+					default: {
+						RegularFile regFile(entry->d_name, isActive);
+						dummy = make_shared<RegularFile>(regFile);
+						break;
+					}
 				}
 				fileCount++;
 				filesInDir.push_back(dummy);
@@ -55,6 +67,7 @@ string Panel::changeDirectory(string path) {
 			} else {
 				errorMessage = "File reading error";
 			}	
+			entry = readdir(pDIR);
 		}
 		closedir(pDIR);
 		paging.currentPage = 0;
@@ -93,8 +106,7 @@ int Panel::getPositionY() {
 }
 
 string Panel::changeDirectory(Directory dir) {
-    changeDirectory(dir.getPath());
-		return dir.getPath();
+    return changeDirectory(dir.getPath());
 }
 
 void Panel::reload() {

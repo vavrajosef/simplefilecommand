@@ -2,13 +2,13 @@
 
 using namespace std;
 
-Create::Create(string newFileName, std::shared_ptr<Directory> triggeredDirectory) : Action::Action(
+Create::Create(string newFileName, shared_ptr<Directory> triggeredDirectory) : Action::Action(
         nullptr, triggeredDirectory) {
     _newFileName = newFileName;
 }
 
-void Create::execute() {
-
+string Create::execute() {
+	return "";
 }
 
 

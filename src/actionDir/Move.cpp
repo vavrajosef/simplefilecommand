@@ -7,7 +7,10 @@ Move::Move(shared_ptr<FileClass> triggeredFile, shared_ptr<Directory> triggeredD
         : Action(triggeredFile, triggeredDirectory),
           Copy(triggeredFile, triggeredDirectory, destinationFile, destinationDirectory) {}
 
-void Move::execute() {
-    Copy::execute();
-    _triggeredFile->deleteFile(_triggeredDirectory->getPath());
+string Move::execute() {
+    string errorMessage = Copy::execute();
+		if(errorMessage != "") {
+			return errorMessage;
+		}
+    return _triggeredFile->deleteFile(_triggeredDirectory->getPath());
 }
