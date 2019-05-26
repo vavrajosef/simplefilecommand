@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <unistd.h>
+#include <regex.h>
 
 using namespace std;
 
@@ -145,4 +146,23 @@ void Panel::switchActiveFileUp() {
             paging.currentPage--;
         }
     }
+}
+
+vector<shared_ptr<FileClass>> Panel::getMatchingFiles(string regExpression, string *errorMessage) {
+	vector<shared_ptr<FileClass>> matchingFiles;
+	regex_t r;
+	if(regcomp(&r, regExpression.c_str(), REG_EXTENDED) == 0) {
+		for(auto it = filesInDir.begin(); it != filesInDir.end(); ++it) {
+			int status = regexec(&r, (*it)->getFileName().c_str(), 0, NULL, 0);
+			if(status == 0) {
+				matchingFiles.push_back(*it);
+			}
+		}
+		if(matchingFiles.empty()) {
+			*errorMessage = "No file matched regular expression";
+		}
+	} else {
+		*errorMessage = "Regular expression could not be compiled";
+	}
+	return matchingFiles;
 }

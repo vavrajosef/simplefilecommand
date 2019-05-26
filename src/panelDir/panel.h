@@ -33,4 +33,5 @@ public:
     std::vector<std::string> printCurrentDir();
     void switchActiveFileDown();
     void switchActiveFileUp();
+		std::vector<std::shared_ptr<FileClass>> getMatchingFiles(std::string regExpression, std::string *errorMessage); 
 };

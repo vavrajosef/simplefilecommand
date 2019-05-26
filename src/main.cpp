@@ -81,7 +81,40 @@ string handleInput(int * inputChar, Panel ** active, Panel ** inactive) {
 			move(INTERACTION_LINE, 0);
 			clrtoeol();
 			noecho();
-			*inputChar = getch();
+			vector<shared_ptr<FileClass>> matchingFiles = (*active)->getMatchingFiles(expression, &errorMessage);
+			if(errorMessage == "") {
+				*inputChar = getch();
+			switch(*inputChar) {
+				case 'd': {
+					for(auto it = matchingFiles.begin(); it != matchingFiles.end(); ++it) {
+						Delete deleteAction ((*it), (*active)->getDirectory());
+						errorMessage = deleteAction.execute();
+					}	
+					break;
+				}
+				case '5': {
+					for(auto it = matchingFiles.begin(); it != matchingFiles.end(); ++it) {
+						Copy copyAction((*it), (*active)->getDirectory(),
+							(*it), (*inactive)->getDirectory());
+						errorMessage = copyAction.execute();
+					}	
+					break;
+				}
+				case '6': {
+					for(auto it = matchingFiles.begin(); it != matchingFiles.end(); ++it) {
+						Move moveAction((*it), (*active)->getDirectory(),
+							(*it), (*inactive)->getDirectory());
+						errorMessage = moveAction.execute();
+					}	
+					break;
+				}
+				default:
+					errorMessage = "Command not supported";
+					break;
+				}
+			}
+		(*active)->reload();
+		(*inactive)->reload();
 			}
 			break;
 		case 9: {

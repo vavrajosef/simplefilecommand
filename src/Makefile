@@ -4,7 +4,7 @@ sfc: file.o panel.o regularfile.o link.o directory.o action.o create.o delete.o 
 	g++ -lncurses -Wall -pedantic -std=c++14 -g -o main main.cpp
 
 panel.o: panelDir/Panel.cpp 
-	g++ -c panelDir/Panel.cpp
+	g++ -c panelDir/panel.h panelDir/Panel.cpp
 
 file.o: fileDir/FileClass.cpp
 	g++ -c fileDir/FileClass.cpp
