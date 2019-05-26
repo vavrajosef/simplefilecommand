@@ -19,7 +19,51 @@ string Directory::getPath() {
 }
 
 string Directory::deleteFile(string path) {
-
+	DIR *pDIR;
+	struct dirent *entry;
+	pDIR = opendir(path.c_str());
+	if(pDIR != nullptr) {
+		while((entry = readdir(pDIR))) {
+			struct stat s;
+			string fileName = string(entry->d_name);
+			string currentFilePath = path + "/" + fileName;
+			if(lstat(currentFilePath.c_str(), &s) == 0) {
+				shared_ptr<FileClass> dummy;
+				if(fileName == "." || fileName == "..") {
+					continue;
+				}
+				
+				switch(s.st_mode & S_IFMT) {
+					case S_IFDIR: {
+						char absolutePath[PATH_MAX + 1];
+						realpath(currentFilePath.c_str(), absolutePath);
+						Directory dir(fileName, false, string(absolutePath));
+						dummy = make_shared<Directory>(dir);
+						break;
+					}
+					case S_IFLNK: {
+						char absolutePath[PATH_MAX + 1];
+						readlink(currentFilePath.c_str(), absolutePath, sizeof(absolutePath));
+						Link link(fileName, false, string(absolutePath));
+						dummy = make_shared<Link>(link);
+						break;
+					}
+					default: {
+						RegularFile regFile(fileName, false);
+						dummy = make_shared<RegularFile>(regFile);
+						break;
+					}
+				}
+				dummy->deleteFile(currentFilePath);
+			}
+		}
+	} else {
+		return "Error deleting directory";
+	}
+	int result = rmdir(path.c_str());
+	if(result != 0) {
+		return "Error deleting directory";
+	}
 	return "";
 }
 
@@ -73,13 +117,16 @@ string Directory::copy(string path, string destination) {
 }
 
 string Directory::moveFile(string path, string destination) {
-
-	return "";
+	string errorMessage = copy(path, destination);
+	if(errorMessage != "") {
+		return errorMessage;
+	}
+	errorMessage = deleteFile(path);
+	return errorMessage;
 }
 
 string Directory::createFile(string path) {
-	string directoryPath = path + "/" + _fileName;
-	int result = mkdir(directoryPath.c_str(), 0777);
+	int result = mkdir(path.c_str(), 0777);
 	if(result != 0) {
 		return "Could not create directory";
 	}

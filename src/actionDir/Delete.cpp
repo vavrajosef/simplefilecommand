@@ -6,5 +6,5 @@ Delete::Delete(shared_ptr<FileClass> triggeredFile, shared_ptr<Directory> trigge
         triggeredFile, triggeredDirectory) {}
 
 string Delete::execute() {
-    return _triggeredFile->deleteFile(_triggeredDirectory->getPath());
+    return _triggeredFile->deleteFile(_triggeredDirectory->getPath() + "/" + _triggeredFile->getFileName());
 }

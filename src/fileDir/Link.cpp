@@ -11,12 +11,19 @@ string Link::toString() {
 }
 
 string Link::moveFile(string path, string destination) {
-
-	return "";
+	string errorMessage = copy(path, destination);
+	if(errorMessage != "") {
+		return errorMessage;
+	}
+	errorMessage = deleteFile(path);
+	return errorMessage;
 }
 
 string Link::deleteFile(string path) {
-
+	int result = unlink(path.c_str());
+	if(result != 0) {
+		return "Error deleting link: " + path;
+	}
 	return "";
 }
 
@@ -26,9 +33,7 @@ string Link::copy(string source, string destination) {
 
 string Link::createFile(string path) {
 	if(symlink(_destination.c_str(), path.c_str()) != 0) {
-			return path + " _ " + _destination;
-//		return "Could not create symlink";
+		return "Could not create symlink";
 	}
-	return "ok - " +
-			path + " _ " + _destination;
+	return "";
 }

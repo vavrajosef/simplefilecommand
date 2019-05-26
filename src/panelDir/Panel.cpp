@@ -47,7 +47,6 @@ string Panel::changeDirectory(string path) {
 					case S_IFLNK: {
 						char linkAbsPath[PATH_MAX + 1];
 						realpath(wholePath.c_str(), linkAbsPath);
-						errorMessage = "link: " + string(linkAbsPath);
 						Link link(entry->d_name, isActive, string(linkAbsPath));
 						dummy = make_shared<Link>(link);
 						break;

@@ -14,11 +14,20 @@ string RegularFile::toString() {
 }
 
 string RegularFile::deleteFile(string path) {
+	int result = unlink(path.c_str());
+	if(result != 0) {
+		return "Error deleting file";
+	}
 	return "";
 }
 
 string RegularFile::moveFile(string path, string destination) {
-	return "";
+	string errorMessage = copy(path, destination);
+	if(errorMessage != "") {
+		return errorMessage;
+	}
+	errorMessage = deleteFile(path);
+	return errorMessage;
 }
 
 string RegularFile::copy(string source, string destination) {
@@ -35,8 +44,7 @@ string RegularFile::copy(string source, string destination) {
 }
 
 string RegularFile::createFile(string path) {
-	string filePath = path + "/" + _fileName;
-	if(creat(filePath.c_str(), 0777) != 0) {
+	if(creat(path.c_str(), 0777) < 0) {
 		return "Could not create file";
 	}
 	return "";

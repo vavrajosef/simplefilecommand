@@ -8,9 +8,7 @@ Move::Move(shared_ptr<FileClass> triggeredFile, shared_ptr<Directory> triggeredD
           Copy(triggeredFile, triggeredDirectory, destinationFile, destinationDirectory) {}
 
 string Move::execute() {
-    string errorMessage = Copy::execute();
-		if(errorMessage != "") {
-			return errorMessage;
-		}
-    return _triggeredFile->deleteFile(_triggeredDirectory->getPath());
+	string wholeDestinationPath = _destinationDirectory->getPath() + "/" + _destinationFile->getFileName();
+	string wholeSourcePath = _triggeredDirectory->getPath() + "/" + _triggeredFile->getFileName();
+	return _triggeredFile->moveFile(wholeSourcePath, wholeDestinationPath);
 }

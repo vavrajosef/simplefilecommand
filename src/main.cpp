@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <string>
 #include "actionDir/Regex.cpp"
+#include <regex.h>
 
 int INTERACTION_LINE = 21;
 
@@ -97,6 +98,87 @@ string handleInput(int * inputChar, Panel ** active, Panel ** inactive) {
 				errorMessage = "Not a directory.";
 			}
 			break;
+		}
+		case 'd': {
+			Delete deleteAction ((*active)->getActiveFile(), (*active)->getDirectory());
+			dummy = make_shared<Delete>(deleteAction);
+			break;
+		}
+		case '7': {
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+			echo();
+			string dirName = "";
+			while(true) {
+				*inputChar = getch();
+				if(*inputChar == '\n') {
+					break;
+				}
+				dirName += *inputChar;
+			}
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+			noecho();
+			Directory newDir(dirName, false, (*active)->getDirectory()->getPath());
+			Create createAction(make_shared<Directory>(newDir), (*active)->getDirectory());
+			dummy = make_shared<Create>(createAction);
+			break;
+		}
+		case '8': {
+
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+			echo();
+			string newFileName = "";
+			while(true) {
+				*inputChar = getch();
+				if(*inputChar == '\n') {
+					break;
+				}
+				newFileName += *inputChar;
+			}
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+			noecho();
+			RegularFile newFile(newFileName, false);
+			Create createAction(make_shared<RegularFile>(newFile), (*active)->getDirectory());
+			dummy = make_shared<Create>(createAction);
+			break;
+		}
+		case '9': {
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+			echo();
+			string newLinkName = "", target = "";
+			while(true) {
+				*inputChar = getch();
+				if(*inputChar == '\n') {
+					break;
+				}
+				newLinkName += *inputChar;
+			}
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+
+			while(true) {
+				*inputChar = getch();
+				if(*inputChar == '\n') {
+					break;
+				}
+				target += *inputChar;
+			}
+			move(INTERACTION_LINE, 0);
+			clrtoeol();
+			noecho();
+			Link newLink(newLinkName, false, target);
+			Create createAction(make_shared<Link>(newLink), (*active)->getDirectory());
+			dummy = make_shared<Create>(createAction);
+			break;
+		}
+		case '6': {
+			Move moveAction((*active)->getActiveFile(), (*active)->getDirectory(),
+			(*active)->getActiveFile(), (*inactive)->getDirectory());
+			dummy = make_shared<Move>(moveAction);
 		}
 		default:
 			break;

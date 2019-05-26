@@ -22,7 +22,7 @@ public:
 };
 
 class Copy : virtual public Action,  virtual public Regexable {
-private:
+protected:
     std::shared_ptr<FileClass> _destinationFile;
     std::shared_ptr<Directory> _destinationDirectory;
 public:
@@ -39,10 +39,8 @@ public:
 };
 
 class Create : virtual public Action {
-private:
-    std::string _newFileName;
 public:
-    Create(std::string newFileName, std::shared_ptr<Directory> triggeredDirectory);
+    Create(std::shared_ptr<FileClass> newFile, std::shared_ptr<Directory> triggeredDirectory);
 
     std::string execute() override;
 };

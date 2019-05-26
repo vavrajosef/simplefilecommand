@@ -2,14 +2,12 @@
 
 using namespace std;
 
-Create::Create(string newFileName, shared_ptr<Directory> triggeredDirectory) : Action::Action(
-        nullptr, triggeredDirectory) {
-    _newFileName = newFileName;
+Create::Create(shared_ptr<FileClass> newFile, shared_ptr<Directory> triggeredDirectory) : Action::Action(
+        newFile, triggeredDirectory) {
 }
 
 string Create::execute() {
-	return "";
+	string filePath = _triggeredDirectory->getPath() + "/" + _triggeredFile->getFileName();
+	return _triggeredFile->createFile(filePath);
 }
-
-
 
