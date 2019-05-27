@@ -7,9 +7,11 @@
 
 using namespace std;
 
-Directory::Directory(string fileName, bool isActive, string path)  : FileClass(fileName, isActive) {
+Directory::Directory(string fileName, bool isActive, string creationTime, string path) : FileClass(fileName, isActive,
+                                                                                                   creationTime) {
     _path = path;
 }
+
 string Directory::toString() {
     return FileClass::toString('D');
 }
@@ -19,117 +21,62 @@ string Directory::getPath() {
 }
 
 string Directory::deleteFile(string path) {
-	DIR *pDIR;
-	struct dirent *entry;
-	pDIR = opendir(path.c_str());
-	if(pDIR != nullptr) {
-		while((entry = readdir(pDIR))) {
-			struct stat s;
-			string fileName = string(entry->d_name);
-			string currentFilePath = path + "/" + fileName;
-			if(lstat(currentFilePath.c_str(), &s) == 0) {
-				shared_ptr<FileClass> dummy;
-				if(fileName == "." || fileName == "..") {
-					continue;
-				}
-				
-				switch(s.st_mode & S_IFMT) {
-					case S_IFDIR: {
-						char absolutePath[PATH_MAX + 1];
-						realpath(currentFilePath.c_str(), absolutePath);
-						Directory dir(fileName, false, string(absolutePath));
-						dummy = make_shared<Directory>(dir);
-						break;
-					}
-					case S_IFLNK: {
-						char absolutePath[PATH_MAX + 1];
-						readlink(currentFilePath.c_str(), absolutePath, sizeof(absolutePath));
-						Link link(fileName, false, string(absolutePath));
-						dummy = make_shared<Link>(link);
-						break;
-					}
-					default: {
-						RegularFile regFile(fileName, false);
-						dummy = make_shared<RegularFile>(regFile);
-						break;
-					}
-				}
-				dummy->deleteFile(currentFilePath);
-			}
-		}
-	} else {
-		return "Error deleting directory";
-	}
-	int result = rmdir(path.c_str());
-	if(result != 0) {
-		return "Error deleting directory";
-	}
-	return "";
+    string errorMessage = "";
+    vector <shared_ptr<FileClass>> filesToDelete = FileLoader::loadDirectory(path);
+    if (filesToDelete.empty()) {
+        errorMessage = "Error deleting directory";
+    } else {
+        for (auto it = filesToDelete.begin(); it != filesToDelete.end(); ++it) {
+            string fileName = (*it)->getFileName();
+            if (fileName == "." || fileName == "..") {
+                continue;
+            }
+            errorMessage = (*it)->deleteFile(path + "/" + fileName);
+        }
+        int result = rmdir(path.c_str());
+        if (result != 0) {
+            errorMessage = "Error deleting directory";
+        }
+    }
+    return errorMessage;
 }
 
 string Directory::copy(string path, string destination) {
-	int result = mkdir(destination.c_str(), 0777);
-	if(result != 0) {
-		return "Could not create directory";
-	}
-	DIR *pDIR;
-	struct dirent *entry;
-	pDIR = opendir(_path.c_str());
-	if(pDIR != nullptr) {
-		while((entry = readdir(pDIR))) {
-			struct stat s;
-			string currentFilePath = _path + "/" + entry->d_name;
-			if(lstat(currentFilePath.c_str(), &s) == 0) {
-				shared_ptr<FileClass> dummy;
-				if(string(entry->d_name) == "." || string(entry->d_name) == "..") {
-					continue;
-				}
-				switch(s.st_mode & S_IFMT) {
-					case S_IFDIR: {
-						char absolutePath[PATH_MAX + 1];
-						realpath(currentFilePath.c_str(), absolutePath);
-						Directory dir(entry->d_name, false, string(absolutePath));
-						dummy = make_shared<Directory>(dir);
-						break;
-					}
-					case S_IFLNK: {
-						char absolutePath[PATH_MAX + 1];
-						readlink(currentFilePath.c_str(), absolutePath, sizeof(absolutePath));
-						Link link(entry->d_name, false, string(absolutePath));
-						dummy = make_shared<Link>(link);
-						break;
-					}
-					default: {
-						RegularFile regFile(entry->d_name, false);
-						dummy = make_shared<RegularFile>(regFile);
-						break;
-					}
-				}
-				dummy->copy(_path, destination + "/" + dummy->getFileName());
-			} else {
-				return "File reading error";
-			}
-		}
-	} else {
-		return "Error opening directory";
-	}
-	return "";
+    string errorMessage = "";
+    int result = mkdir(destination.c_str(), 0777);
+    if (result != 0) {
+        errorMessage = "Could not create directory";
+    } else {
+        vector <shared_ptr<FileClass>> filesToCopy = FileLoader::loadDirectory(path);
+        if (filesToCopy.empty()) {
+            errorMessage = "Error copying directory";
+        } else {
+            for (auto it = filesToCopy.begin(); it != filesToCopy.end(); ++it) {
+                string fileName = (*it)->getFileName();
+                if (fileName == "." || fileName == "..") {
+                    continue;
+                }
+                errorMessage = (*it)->copy(_path, destination + "/" + fileName);
+            }
+        }
+    }
+    return errorMessage;
 }
 
 string Directory::moveFile(string path, string destination) {
-	string errorMessage = copy(path, destination);
-	if(errorMessage != "") {
-		return errorMessage;
-	}
-	errorMessage = deleteFile(path);
-	return errorMessage;
+    string errorMessage = copy(path, destination);
+    if (errorMessage != "") {
+        return errorMessage;
+    }
+    errorMessage = deleteFile(path);
+    return errorMessage;
 }
 
 string Directory::createFile(string path) {
-	int result = mkdir(path.c_str(), 0777);
-	if(result != 0) {
-		return "Could not create directory";
-	}
-	return "";
+    int result = mkdir(path.c_str(), 0777);
+    if (result != 0) {
+        return "Could not create directory";
+    }
+    return "";
 }
 

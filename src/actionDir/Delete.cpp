@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Delete::Delete(shared_ptr<FileClass> triggeredFile, shared_ptr<Directory> triggeredDirectory) : Action::Action(
+Delete::Delete(shared_ptr <FileClass> triggeredFile, shared_ptr <Directory> triggeredDirectory) : Action::Action(
         triggeredFile, triggeredDirectory) {}
 
 string Delete::execute() {
