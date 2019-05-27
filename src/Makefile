@@ -46,3 +46,6 @@ clean:
 	rm -f "actionDir/*.gch"
 	rm -f "fileDir/*.gch"
 	rm -f "panelDir/*.gch"
+
+run:
+    ./main

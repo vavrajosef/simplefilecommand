@@ -2,7 +2,8 @@
 
 using namespace std;
 
-Link::Link(string fileName, bool isActive, string destination) : FileClass(fileName, isActive) {
+Link::Link(string fileName, bool isActive, string creationTime, string destination) : FileClass(fileName, isActive,
+                                                                                                creationTime) {
     _destination = destination;
 }
 
@@ -11,29 +12,29 @@ string Link::toString() {
 }
 
 string Link::moveFile(string path, string destination) {
-	string errorMessage = copy(path, destination);
-	if(errorMessage != "") {
-		return errorMessage;
-	}
-	errorMessage = deleteFile(path);
-	return errorMessage;
+    string errorMessage = copy(path, destination);
+    if (errorMessage != "") {
+        return errorMessage;
+    }
+    errorMessage = deleteFile(path);
+    return errorMessage;
 }
 
 string Link::deleteFile(string path) {
-	int result = unlink(path.c_str());
-	if(result != 0) {
-		return "Error deleting link: " + path;
-	}
-	return "";
+    int result = unlink(path.c_str());
+    if (result != 0) {
+        return "Error deleting link: " + path;
+    }
+    return "";
 }
 
 string Link::copy(string source, string destination) {
-	return createFile(destination);
+    return createFile(destination);
 }
 
 string Link::createFile(string path) {
-	if(symlink(_destination.c_str(), path.c_str()) != 0) {
-		return "Could not create symlink";
-	}
-	return "";
+    if (symlink(_destination.c_str(), path.c_str()) != 0) {
+        return "Could not create symlink";
+    }
+    return "";
 }

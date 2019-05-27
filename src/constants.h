@@ -1,3 +1,13 @@
-int INTERACTION_LINE = 51;
-char UP_ARROW = 'A';
-char DOWN_ARROW = 'B';
+const int INTERACTION_LINE = 21;
+const char DELETE_ACTION = 'd';
+const char REGEX_ACTION = 'r';
+const char UP_KEY = 'A';
+const char DOWN_KEY = 'B';
+const char COPY_ACTION = '5';
+const char MOVE_ACTION = '6';
+const int ENTER_KEY = 10;
+const int TAB_KEY = 9;
+const char QUIT = 'q';
+const char CREATE_DIR = '7';
+const char CREATE_REG_FILE = '8';
+const char CREATE_LINK = '9';
