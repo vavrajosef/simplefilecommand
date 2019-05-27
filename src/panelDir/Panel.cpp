@@ -13,7 +13,7 @@ Panel::Panel(int positionX, int positionY, int sizeX, int sizeY) {
     _positionY = positionY;
     _sizeX = sizeX;
     _sizeY = sizeY;
-    Directory newDir(".", false, ".");
+    Directory newDir(".", false, "", ".");
     currentDirectory = make_shared<Directory>(newDir);
 }
 
@@ -23,7 +23,7 @@ string Panel::changeDirectory(string path) {
     if (loadedFiles.empty()) {
         errorMessage = "Error opening a directory";
     } else {
-        Directory newDir(path, false, path);
+        Directory newDir(path, false, "", path);
         currentDirectory = make_shared<Directory>(newDir);
         filesInDir.clear();
         if (activeFile != nullptr) {

@@ -23,8 +23,12 @@ string FileClass::toString(char type) {
     result += "|";
     if (_isActive) {
         result += "*";
-    }
+    } else {
+				result += " ";
+		}
+		result += "|";
     result += _creationTime;
+		result += "|";
     return result;
 }
 

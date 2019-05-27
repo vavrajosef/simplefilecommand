@@ -1,5 +1,7 @@
 #include <string>
 #include "../constants.h"
+#include <vector>
+#include <memory>
 
 class FileClass {
 protected:
@@ -88,7 +90,7 @@ public:
 
 class FileLoader {
 private:
-    FileClass() {}
+    FileLoader() {}
 
 public:
     static std::vector <std::shared_ptr<FileClass>> loadDirectory(std::string path);

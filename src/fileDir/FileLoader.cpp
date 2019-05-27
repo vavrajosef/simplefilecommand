@@ -1,9 +1,15 @@
 #include "files.h"
 #include <time.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <memory>
 
 using namespace std;
 
 vector <shared_ptr<FileClass>> FileLoader::loadDirectory(string path) {
+
     DIR *pDIR;
     struct dirent *entry;
     vector <shared_ptr<FileClass>> files;

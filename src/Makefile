@@ -1,10 +1,13 @@
 all: sfc
 
-sfc: file.o panel.o regularfile.o link.o directory.o action.o create.o delete.o copy.o move.o regex.o
+sfc: fileloader.o file.o panel.o regularfile.o link.o directory.o action.o create.o delete.o copy.o move.o 
 	g++ -lncurses -Wall -pedantic -std=c++14 -g -o main main.cpp
 
 panel.o: panelDir/Panel.cpp 
 	g++ -c panelDir/panel.h panelDir/Panel.cpp
+
+fileloader.o: fileDir/FileLoader.cpp
+	g++ -c fileDir/files.h fileDir/FileLoader.cpp
 
 file.o: fileDir/FileClass.cpp
 	g++ -c fileDir/FileClass.cpp
@@ -33,9 +36,6 @@ copy.o: actionDir/Copy.cpp
 move.o: actionDir/Move.cpp
 	g++ -c actionDir/Move.cpp
 
-regex.o: actionDir/Regex.cpp
-	g++ -c actionDir/Regex.cpp
-
 clean:
 	rm -f main
 	rm -f *.o
@@ -48,4 +48,4 @@ clean:
 	rm -f "panelDir/*.gch"
 
 run:
-    ./main
+	./main

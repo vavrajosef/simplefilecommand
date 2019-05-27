@@ -51,12 +51,12 @@ string Directory::copy(string path, string destination) {
         if (filesToCopy.empty()) {
             errorMessage = "Error copying directory";
         } else {
-            for (auto it = filesToDelete.begin(); it != filesToCopy.end(); ++it) {
+            for (auto it = filesToCopy.begin(); it != filesToCopy.end(); ++it) {
                 string fileName = (*it)->getFileName();
                 if (fileName == "." || fileName == "..") {
                     continue;
                 }
-                errorMessage = (*it)->copy(_copy, path + "/" + fileName);
+                errorMessage = (*it)->copy(_path, destination + "/" + fileName);
             }
         }
     }

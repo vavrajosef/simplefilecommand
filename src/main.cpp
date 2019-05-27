@@ -20,9 +20,9 @@ shared_ptr <Action> prepareDeleteAction(Panel *);
 
 shared_ptr <Action> prepareCreateAction(shared_ptr <FileClass> fileToCreate, Panel *);
 
-shared_ptr <Action> prepareCopyAction();
+shared_ptr <Action> prepareCopyAction(Panel *, Panel *);
 
-shared_ptr <Action> prepareMoveAction();
+shared_ptr <Action> prepareMoveAction(Panel *, Panel *);
 
 string receiveInputFromUser();
 
@@ -95,7 +95,9 @@ string handleInput(int *inputChar, Panel **active, Panel **inactive) {
             break;
         }
         case TAB_KEY: {
-            (*active).swap(*inactive);
+						Panel * temp = *active;
+						*active = *inactive;
+						*inactive = temp;
             break;
         }
         case ENTER_KEY: {
@@ -113,21 +115,21 @@ string handleInput(int *inputChar, Panel **active, Panel **inactive) {
         }
         case CREATE_DIR: {
             string dirName = receiveInputFromUser();
-            Directory newDir(dirName, false, (*active)->getDirectory()->getPath());
-            dummy = prepareCreateAction(make_shared<FileClass>(newDir), *active);
+            Directory newDir(dirName, false, "", (*active)->getDirectory()->getPath());
+            dummy = prepareCreateAction(make_shared<Directory>(newDir), *active);
             break;
         }
         case CREATE_REG_FILE: {
             string newFileName = receiveInputFromUser();
-            RegularFile newFile(newFileName, false);
-            dummy = prepareCreateAction(make_shared<FileClass>(newFile), *active);
+            RegularFile newFile(newFileName, false, "");
+            dummy = prepareCreateAction(make_shared<RegularFile>(newFile), *active);
             break;
         }
         case CREATE_LINK: {
             string newLinkName = receiveInputFromUser();
             string target = receiveInputFromUser();
-            Link newLink(newLinkName, false, target);
-            dummy = prepareCreateAction(make_shared<FileClass>(newLink), *active);
+            Link newLink(newLinkName, false, "", target);
+            dummy = prepareCreateAction(make_shared<Link>(newLink), *active);
             break;
         }
         case MOVE_ACTION: {
@@ -174,7 +176,7 @@ void reprint(WINDOW *window, Panel *panel) {
 }
 
 shared_ptr <Action> prepareDeleteAction(Panel *active) {
-    Delete deleteAction((*active)->getActiveFile(), (*active)->getDirectory());
+    Delete deleteAction(active->getActiveFile(), active->getDirectory());
     return make_shared<Delete>(deleteAction);
 }
 
@@ -217,12 +219,12 @@ shared_ptr <Action> prepareMoveAction(Panel *active, Panel *inactive) {
 string handleRegexAction(Panel *active, Panel *inactive) {
     string errorMessage = "";
     string expression = receiveInputFromUser();
-
+		char inputChar;
     // get all files in current directory matching regular expression
     vector <shared_ptr<FileClass>> matchingFiles = active->getMatchingFiles(expression, &errorMessage);
     if (errorMessage == "") {
-        *inputChar = getch();
-        switch (*inputChar) {
+        inputChar = getch();
+        switch (inputChar) {
             case DELETE_ACTION: {
                 for (auto it = matchingFiles.begin(); it != matchingFiles.end(); ++it) {
                     Delete deleteAction((*it), active->getDirectory());
