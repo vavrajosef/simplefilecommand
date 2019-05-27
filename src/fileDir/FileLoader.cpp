@@ -22,8 +22,8 @@ vector <shared_ptr<FileClass>> FileLoader::loadDirectory(string path) {
             if (lstat(currentFilePath.c_str(), &s) == 0) {
                 shared_ptr <FileClass> dummy;
                 string untrimmedTime = ctime(&s.st_ctime);
-								size_t last = untrimmedTime.find_last_not_of("\t\n\v\f\r ");
-    						string timeDetail = untrimmedTime.substr(0, (last + 1));
+                size_t last = untrimmedTime.find_last_not_of("\t\n\v\f\r ");
+                string timeDetail = untrimmedTime.substr(0, (last + 1));
                 switch (s.st_mode & S_IFMT) {
 
                     // directory

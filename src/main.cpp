@@ -95,9 +95,9 @@ string handleInput(int *inputChar, Panel **active, Panel **inactive) {
             break;
         }
         case TAB_KEY: {
-						Panel * temp = *active;
-						*active = *inactive;
-						*inactive = temp;
+            Panel *temp = *active;
+            *active = *inactive;
+            *inactive = temp;
             break;
         }
         case ENTER_KEY: {
@@ -219,7 +219,7 @@ shared_ptr <Action> prepareMoveAction(Panel *active, Panel *inactive) {
 string handleRegexAction(Panel *active, Panel *inactive) {
     string errorMessage = "";
     string expression = receiveInputFromUser();
-		char inputChar;
+    char inputChar;
     // get all files in current directory matching regular expression
     vector <shared_ptr<FileClass>> matchingFiles = active->getMatchingFiles(expression, &errorMessage);
     if (errorMessage == "") {

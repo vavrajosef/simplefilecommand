@@ -33,7 +33,7 @@ string Panel::changeDirectory(string path) {
         filesInDir[0]->setActive(true);
         activeFile = filesInDir[0];
         paging.currentPage = 0;
-        paging.maxPages = filesInDir.size() / 15;
+        paging.maxPages = filesInDir.size() / RECORDS_PER_PAGE;
         paging.recordCount = filesInDir.size();
         paging.positionOfFile = 0;
     }
@@ -74,8 +74,9 @@ void Panel::reload() {
 
 vector <string> Panel::printCurrentDir() {
     vector <string> fileDetails;
-    int startPage = paging.currentPage * 15;
-    int endPage = (startPage + 15) > paging.recordCount ? paging.recordCount : (startPage + 15);
+    int startPage = paging.currentPage * RECORDS_PER_PAGE;
+    int endPage =
+            (startPage + RECORDS_PER_PAGE) > paging.recordCount ? paging.recordCount : (startPage + RECORDS_PER_PAGE);
     for (int i = startPage; i < endPage; i++) {
         fileDetails.push_back(filesInDir[i]->toString());
     }
@@ -89,7 +90,7 @@ void Panel::switchActiveFileDown() {
         paging.positionOfFile++;
         activeFile = filesInDir[paging.positionOfFile];
         activeFile->setActive(true);
-        if (paging.positionOfFile >= ((paging.currentPage + 1) * 15)) {
+        if (paging.positionOfFile >= ((paging.currentPage + 1) * RECORDS_PER_PAGE)) {
             paging.currentPage++;
         }
     }
@@ -101,7 +102,7 @@ void Panel::switchActiveFileUp() {
         paging.positionOfFile--;
         activeFile = filesInDir[paging.positionOfFile];
         activeFile->setActive(true);
-        if (paging.positionOfFile < (paging.currentPage * 15)) {
+        if (paging.positionOfFile < (paging.currentPage * RECORDS_PER_PAGE)) {
             paging.currentPage--;
         }
     }

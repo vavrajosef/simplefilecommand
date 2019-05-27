@@ -10,12 +10,12 @@ FileClass::FileClass(string fileName, bool isActive, string creationTime) {
 
 string FileClass::toString(char type) {
     string result, fileName;
-    if (_fileName.size() > 10) {
-        fileName = _fileName.substr(0, 7);
+    if (_fileName.size() > MAX_NAME_LENGTH) {
+        fileName = _fileName.substr(0, MAX_NAME_LENGTH - 3);
         fileName += "...";
     } else {
         fileName = _fileName;
-        fileName.insert(_fileName.size(), 10 - _fileName.size(), ' ');
+        fileName.insert(_fileName.size(), MAX_NAME_LENGTH - _fileName.size(), ' ');
     }
     result = fileName;
     result += "|";
@@ -24,11 +24,10 @@ string FileClass::toString(char type) {
     if (_isActive) {
         result += "*";
     } else {
-				result += " ";
-		}
-		result += "|";
+        result += " ";
+    }
+    result += "|";
     result += _creationTime;
-		result += "|";
     return result;
 }
 

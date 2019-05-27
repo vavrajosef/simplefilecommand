@@ -11,3 +11,5 @@ const char QUIT = 'q';
 const char CREATE_DIR = '7';
 const char CREATE_REG_FILE = '8';
 const char CREATE_LINK = '9';
+const int MAX_NAME_LENGTH = 16;
+const int RECORDS_PER_PAGE = 18;
