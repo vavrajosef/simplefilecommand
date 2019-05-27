@@ -43,9 +43,9 @@ clean:
 	rm -f "fileDir/*.o"
 	rm -f "panelDir/*.o"
 	rm -f "vgcore.*"	
-	rm -f "actionDir/*.gch"
-	rm -f "fileDir/*.gch"
-	rm -f "panelDir/*.gch"
+	rm -f "actionDir/*.h.gch"
+	rm -f "fileDir/files.h.gch"
+	rm -f "panelDir/panel.h.gch"
 
 run:
 	./main
