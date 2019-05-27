@@ -42,7 +42,7 @@ clean:
 	rm -f "actionDir/*.o"
 	rm -f "fileDir/*.o"
 	rm -f "panelDir/*.o"
-	rm -f vgcore.*	
+	rm -f "vgcore.*"	
 	rm -f "actionDir/*.gch"
 	rm -f "fileDir/*.gch"
 	rm -f "panelDir/*.gch"
